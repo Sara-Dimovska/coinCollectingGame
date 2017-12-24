@@ -1,5 +1,5 @@
 /*
-    my Bugs:
+   Bugs list:
    
 */
 
@@ -50,7 +50,13 @@ var playState = {
         this.rezultatLabela = game.add.text(50, 10, 'резултат: 0',{ font: '30px Arial', fill: '#ffffff' });
 
         game.global.rezultat = 0;
-
+        
+        this.skokaZvuk = game.add.audio('skoka');
+        this.skokaZvuk.volume = 0.3;
+        this.zemaParickaZvuk = game.add.audio('zemaParicka');
+        this.zemaParickaZvuk.volume = 0.4;
+        this.mrtovZvuk = game.add.audio('mrtov');
+        this.mrtovZvuk.volume = 0.35;
 
     },
     
@@ -91,14 +97,18 @@ var playState = {
         // ako e pritisnata gorna strelka i igracot e na zemja
         if (this.cursor.up.isDown && this.igrac.body.touching.down) {
             // treba da skoka
-            this.igrac.body.velocity.y = -520;         
+            this.igrac.body.velocity.y = -520;  
+            this.skokaZvuk.play();
         }
 
     },
     igracUmira: function() {
+        this.mrtovZvuk.play();
         game.state.start('menu');      
     },
     zemiParicka: function(igrac, paricka) {
+        this.zemaParickaZvuk.play();
+        
         // obnovi rezultat
         game.global.rezultat += 5;
         this.rezultatLabela.text = 'резултат: ' + game.global.rezultat;

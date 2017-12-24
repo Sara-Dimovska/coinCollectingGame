@@ -17,6 +17,9 @@ var loadState = {
         game.load.image('zidH', 'resursi/horizontalen.png');
         game.load.image('neprijatel', 'resursi/neprijatel.png');
         game.load.image('paricka', 'resursi/paricka.png');
+        game.load.audio('skoka', ['resursi/skoka.ogg', 'resursi/skoka.mp3']);
+        game.load.audio('zemaParicka', ['resursi/zemaParicka.ogg', 'resursi/zemaParicka.mp3']);
+        game.load.audio('mrtov', ['resursi/mrtov.ogg', 'resursi/mrtov.mp3']);
 
         // resurs koj kje bide iskoristen za slednata sostojba
         game.load.image('background', 'resursi/pozadinskaSlika.jpg');
