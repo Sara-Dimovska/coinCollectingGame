@@ -2,7 +2,7 @@
 var game = new Phaser.Game(1000, 900, Phaser.AUTO, 'gameDiv');
 // Globalna promenliva
 game.global = {
-    score: 0
+    rezultat: 0
 };
 // Dodaj gi site sostojbi
 game.state.add('boot', bootState);

@@ -18,7 +18,7 @@ var menuState = {
             game.add.text(x,y,"text",style in CSS);
         */
         var rezultat = game.add.text(game.world.centerX, game.world.centerY,
-                                       'Вашиот резултат: ' + game.global.score,
+                                       'Вашиот резултат: ' + game.global.rezultat,
                                        { font: '25px Arial', fill: '#ffffff' });
         rezultat.anchor.setTo(0.5, 0.5);
         

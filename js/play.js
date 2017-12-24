@@ -5,9 +5,9 @@
 
 var playState = {
     sozdadiSvet: function() {
-        // Kreiranje grupa so pomosh na vklucen Arcade physics
-        this.zidovi = game.add.group();
-        this.zidovi.enableBody = true;
+       
+        this.zidovi = game.add.group();  // Kreiranje grupa 
+        this.zidovi.enableBody = true; // dodadi Arcade physics svojstva za celata grupa
         
         
         // Kreiraj 10 zidovi
@@ -29,6 +29,9 @@ var playState = {
         
         // Postavi gi site zidovi da bidat nepodvizni koga  kje bidat dopreni
         this.zidovi.setAll('body.immovable', true);
+        
+        this.paricka = game.add.sprite(100,340,'paricka');       
+        game.physics.arcade.enable(this.paricka);
        
     },
     create: function(){ // default Phaser funkcija
@@ -44,9 +47,9 @@ var playState = {
         this.igrac.body.gravity.y = 500;
 
         // Prikazi rezultat
-        this.rezultat = game.add.text(50, 10, 'резултат: 0',{ font: '30px Arial', fill: '#ffffff' });
+        this.rezultatLabela = game.add.text(50, 10, 'резултат: 0',{ font: '30px Arial', fill: '#ffffff' });
 
-        game.global.score = 0;
+        game.global.rezultat = 0;
 
 
     },
@@ -63,6 +66,8 @@ var playState = {
             this.igracUmira();
         }
       
+        // povikaj 'zemiParicka' koga igracot se preklopuva so parickata
+        game.physics.arcade.overlap(this.igrac, this.paricka, this.zemiParicka, null, this);
     },
   
     igracDvizenje: function(){
@@ -92,5 +97,38 @@ var playState = {
     },
     igracUmira: function() {
         game.state.start('menu');      
+    },
+    zemiParicka: function(igrac, paricka) {
+        // obnovi rezultat
+        game.global.rezultat += 5;
+        this.rezultatLabela.text = 'резултат: ' + game.global.rezultat;
+        
+        // napravi nevidliva paricka
+        this.paricka.scale.setTo(0, 0);
+        
+        // Skaliraj paricka za vremeod 300ms
+        game.add.tween(this.paricka.scale).to({x: 1, y: 1}, 300).start();     
+        // game.add.tween(this.player.scale).to({x: 1.3, y: 1.3}, 50).to({x: 1, y: 1}, 150).start();
+        
+        
+        this.obnoviPozicijaParicka();
+    },
+    obnoviPozicijaParicka: function() {
+        // Zacuvaj site mozni pozicii na paricka vo niza
+        var pozicijaParicka = [
+            {x: 300, y: 140}, {x: 650, y: 140}, // Goren red
+            {x: 100, y: 340}, {x: 865, y: 340}, // Sreden red
+            {x: 300, y: 790}, {x: 640, y: 790} // Dolen red
+
+        ];
+        // Izbrisi ja tekovnata pozicija od nizata
+        for (var i = 0; i < pozicijaParicka.length; i++) {
+            if (pozicijaParicka[i].x === this.paricka.x) {
+                pozicijaParicka.splice(i, 1);
+            }
+        }
+        // biranje random pozicija od nizata
+        var novaPozicija = pozicijaParicka[game.rnd.integerInRange(0, pozicijaParicka.length-1)];
+        this.paricka.reset(novaPozicija.x, novaPozicija.y);
     }
 };
