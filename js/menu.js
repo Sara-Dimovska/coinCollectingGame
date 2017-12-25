@@ -4,7 +4,7 @@ var menuState = {
         game.add.image(0, 0, 'pozadina1');
         // prikazi ime na igra
         var naslov = game.add.text(game.world.centerX, -50, 'Собирај парички',
-                                      { font: '50px Arial', fill: '#ffffff' });      
+                                      { font: '80px Arial', fill: '#ffffff' });      
         naslov.anchor.setTo(0.5, 0.5);      
         /* tweens, svojstvo za vizuelni efekti
          go pridvizuva naslovot do 300px za vreme  od 1s(1000ms) 
@@ -40,21 +40,7 @@ var menuState = {
         key.onDown.addOnce(this.start, this);
         game.input.onDown.add(this.start,this);
         
-        // localStorage.setItem('name', value)
-        if (!localStorage.getItem('najdobriPoeni')) {     
-            localStorage.setItem('najdobriPoeni', 0);
-        }
-        
-        if (game.global.rezultat > localStorage.getItem('najdobriPoeni')) {
-            localStorage.setItem('najdobriPoeni', game.global.rezultat);
-        }
-
-        var text = 'Поени: ' + game.global.rezultat + '\n Најдобри поени: ' +
-            localStorage.getItem('najdobriPoeni');
-        
-        var scoreLabel = game.add.text(game.world.centerX, game.world.centerY, text,
-                                       { font: '25px Arial', fill: '#ffffff', align: 'center' });
-        scoreLabel.anchor.setTo(0.5, 0.5);
+       
     },
     start: function() {
         // Startuvaj ja igrata

@@ -49,10 +49,10 @@ var playState = {
         this.neprijateli.enableBody = true;
         // Kreiraj "n" neprijateli od istata slika
         // grupata e "dead" pod default, neaktivna
-        this.neprijateli.createMultiple(2, 'neprijatel');
+        this.neprijateli.createMultiple(10, 'neprijatel');
         this.neprijateli.setAll('outOfBoundsKill', true);
         this.neprijateli.setAll('checkWorldBounds',true);
-        game.time.events.loop(4000, this.dodajNeprijatel, this); // na sekoi 4s dodadi neprijatel vo scenata
+        //game.time.events.loop(4000, this.dodajNeprijatel, this); // na sekoi 4s dodadi neprijatel vo scenata
 
 
         brojZivoti = 5; 
@@ -84,7 +84,7 @@ var playState = {
         this.igrac.body.gravity.y = 500;
 
         // Prikazi rezultat
-        this.rezultatLabela = game.add.text(50, 10, 'парички: 0/50',{ font: '30px "Arial Black", Gadget, sans-serif', 
+        this.rezultatLabela = game.add.text(50, 10, 'парички: 0/100',{ font: '30px "Arial Black", Gadget, sans-serif', 
                                                                      fill: '#600000',
                                                                      fontWeight: 'bold'});
 
@@ -94,9 +94,11 @@ var playState = {
         this.skokaZvuk.volume = 0.3;
         this.zemaParickaZvuk = game.add.audio('zemaParicka');
         this.zemaParickaZvuk.volume = 0.4;
-        this.mrtovZvuk = game.add.audio('mrtov');
-        this.mrtovZvuk.volume = 0.35;
-        
+        this.mrtovNeprijatel = game.add.audio('mrtovNeprijatel');
+        this.mrtovNeprijatel.volume = 0.35;
+        this.mrtovIgrac = game.add.audio('mrtovIgrac');
+        this.mrtovIgrac.volume = 0.35;
+
         // pukanje
         laseri =game.add.group();
         laseri.enableBody = true;
@@ -106,9 +108,10 @@ var playState = {
         laseri.setAll('anchor.x',0.5);
         laseri.setAll('outOFBoundsKill',true);
         laseri.setAll('checkWorldBounds',true);
-        
+
         laseriTriger = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+        this.sledenNeprijatelVreme = 3200;
     },
 
     update: function(){ // default Phaser funkcija
@@ -130,14 +133,37 @@ var playState = {
         game.physics.arcade.collide(this.neprijateli, this.zidovi);
         // povikaj funkcija odzemiZivot sekoj pat koga kje se sudrat igrac i neprijatel
         game.physics.arcade.overlap(this.igrac, this.neprijateli, this.odzemiZivot,null, this);
-        
+
         game.physics.arcade.collide(laseri, this.zidovi,this.laserVoZid,null,this);
         game.physics.arcade.overlap(this.neprijateli,laseri,this.ubijNeprijatel,null,this);
-        
+
+
+        if (this.sledenNeprijatelVreme < game.time.now) {
+            // pomoshni
+            var pocetok = 4000, kraj = 1000, poeni = 50;
+           
+            /*
+             presmetki za namaluvanje na vremetraenje pomegju sekoj nov neprijatel:
+             
+            za 0la paricki:
+                – docnenje = max(4000 - 3000 * 0/100, 1000) = max(4000 - 0, 1000) = 4000 // na  sekoi 4s po eden
+                
+            za 25 paricki sobrani:
+                – docnenje = max(4000 - 3000*50/100, 1000) = max(4000 - 1500, 1000) = 2500 // na  sekoi 2.5s po eden
+                
+            za 50 paricki sobrani:
+                – docnenje = max(4000 - 3000*100/100, 1000) = max(4000 - 3000, 1000) = 1000 // po eden neprijatel za 1s              
+            */
+            var docnenje = Math.max(pocetok - (pocetok-kraj)*game.global.rezultat / poeni, kraj);
+            this.dodajNeprijatel();
+            this.sledenNeprijatelVreme = game.time.now + docnenje;
+        }
+
+
     },
     ubijNeprijatel:function(neprijatel, laser){
         neprijatel.kill();
-        this.mrtovZvuk.play();
+        this.mrtovNeprijatel.play();
     },
     laserVoZid:function(laser,zid){
         laser.kill();
@@ -166,15 +192,15 @@ var playState = {
             this.igrac.body.velocity.y = -520;  
             this.skokaZvuk.play();
         }
-        
+
         if(laseriTriger.isDown){
             this.pukajFunkcija();
         }
     },
     pukajFunkcija: function(){
         if(game.time.now > laserVreme){
-           var laser = laseri.getFirstExists(false);
-            
+            var laser = laseri.getFirstExists(false);
+
             if(laser){
                 laser.reset(this.igrac.x + 5,this.igrac.y + 40);
                 if(this.igrac.frame == 0) // nasocen levo
@@ -187,7 +213,7 @@ var playState = {
     },
     odzemiZivot:function(igrac,neprijatel){
         if(brojZivoti > 0){
-            this.mrtovZvuk.play();
+            this.mrtovIgrac.play();
             neprijatel.kill();
             zivoti[brojZivoti-1].kill();
             zivoti.pop(); 
@@ -195,23 +221,22 @@ var playState = {
         }
 
         else {
-            this.playerDie();
+            this.igracUmira();
         }
 
 
     },
     igracUmira: function() {
-        this.mrtovZvuk.play();
-        game.state.start('menu');   
+        this.mrtovIgrac.play(); 
         zivoti.length = 0;
-        game.state.start('menu');
+        game.state.start('gameOver');
     },
     zemiParicka: function(igrac, paricka) {
         this.zemaParickaZvuk.play();
 
         // obnovi rezultat
         game.global.rezultat += 5;
-        this.rezultatLabela.text = 'парички: ' + game.global.rezultat + '/50';
+        this.rezultatLabela.text = 'парички: ' + game.global.rezultat + '/100';
 
         // napravi nevidliva paricka
         this.paricka.scale.setTo(0, 0);
@@ -266,6 +291,6 @@ var playState = {
         neprijatel.body.gravity.y = 100;        
         neprijatel.body.velocity.x = 90 *plusOrMinus; // 100 or -100
         neprijatel.body.bounce.set(1);
-          
+
     }
 };

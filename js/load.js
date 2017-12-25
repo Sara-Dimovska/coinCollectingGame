@@ -22,7 +22,10 @@ var loadState = {
         game.load.image('puka','resursi/shoot.png');
         game.load.audio('skoka', ['resursi/skoka.ogg', 'resursi/skoka.mp3']);
         game.load.audio('zemaParicka', ['resursi/zemaParicka.ogg', 'resursi/zemaParicka.mp3']);
-        game.load.audio('mrtov', ['resursi/mrtov.ogg', 'resursi/mrtov.mp3']);
+        game.load.audio('mrtovNeprijatel', ['resursi/mrtovNeprijatel.ogg', 'resursi/mrtovNeprijatel.mp3']);
+        game.load.audio('mrtovIgrac', ['resursi/mrtovIgrac.ogg', 'resursi/mrtovIgrac.mp3']);
+
+
 
         // resurs koj kje bide iskoristen za slednata sostojba
         game.load.image('pozadina1', 'resursi/pozadinskaSlika.jpg');
