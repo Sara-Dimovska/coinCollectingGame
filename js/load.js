@@ -12,17 +12,19 @@ var loadState = {
         game.load.setPreloadSprite(progress);
 
         // izvleci gi site potrebni resursi za igrata
-        game.load.spritesheet('igrac', 'resursi/spritesheet.png',85,100);       
-        game.load.image('zidV', 'resursi/vertikalen.png');
-        game.load.image('zidH', 'resursi/horizontalen.png');
+        game.load.spritesheet('igrac', 'resursi/igrac.png',85,100);       
+        game.load.image('zidV', 'resursi/V.png');
+        game.load.image('zidH', 'resursi/H.png');
         game.load.image('neprijatel', 'resursi/neprijatel.png');
         game.load.image('paricka', 'resursi/paricka.png');
+        game.load.image('pozadina2','resursi/backgroundLvl1.png');
+        game.load.image('zivot','resursi/zivot.png');
         game.load.audio('skoka', ['resursi/skoka.ogg', 'resursi/skoka.mp3']);
         game.load.audio('zemaParicka', ['resursi/zemaParicka.ogg', 'resursi/zemaParicka.mp3']);
         game.load.audio('mrtov', ['resursi/mrtov.ogg', 'resursi/mrtov.mp3']);
 
         // resurs koj kje bide iskoristen za slednata sostojba
-        game.load.image('background', 'resursi/pozadinskaSlika.jpg');
+        game.load.image('pozadina1', 'resursi/pozadinskaSlika.jpg');
 
     },
     create: function() {

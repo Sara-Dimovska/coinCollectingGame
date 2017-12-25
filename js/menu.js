@@ -1,7 +1,7 @@
 var menuState = {
     create: function() {
         // dodadi pozadina
-        game.add.image(0, 0, 'background');
+        game.add.image(0, 0, 'pozadina1');
         // prikazi ime na igra
         var naslov = game.add.text(game.world.centerX, -50, 'Собирај парички',
                                       { font: '50px Arial', fill: '#ffffff' });      
@@ -12,19 +12,10 @@ var menuState = {
         */
         game.add.tween(naslov).to({y:300},1000).easing(Phaser.Easing.Bounce.Out).start();
 
-        
-        
-        /* Prikazi rezultat na sredina od ekranot 
-            game.add.text(x,y,"text",style in CSS);
-        */
-        var rezultat = game.add.text(game.world.centerX, game.world.centerY,
-                                       'Вашиот резултат: ' + game.global.rezultat,
-                                       { font: '25px Arial', fill: '#ffffff' });
-        rezultat.anchor.setTo(0.5, 0.5);
-        
+              
         
         // Objasnenie kako da se startuva igrata
-        var startuvaj = game.add.text(game.world.centerX, game.world.centerY + 40,
+        var startuvaj = game.add.text(game.world.centerX, game.world.centerY + 60,
                                        'за Старт на играта, притиснете ја стрелката за надолу',
                                        { font: '25px Arial', fill: '#ffffff' });
         startuvaj.anchor.setTo(0.5, 0.5);
@@ -45,9 +36,25 @@ var menuState = {
             Koga e pritistano soodvetnoto kopce, povikaj ja navedenata contexFunction
         */
         key.onDown.addOnce(this.start, this);
+        
+        // localStorage.setItem('name', value)
+        if (!localStorage.getItem('najdobriPoeni')) {     
+            localStorage.setItem('najdobriPoeni', 0);
+        }
+        
+        if (game.global.rezultat > localStorage.getItem('najdobriPoeni')) {
+            localStorage.setItem('najdobriPoeni', game.global.rezultat);
+        }
+
+        var text = 'Поени: ' + game.global.rezultat + '\n Најдобри поени: ' +
+            localStorage.getItem('najdobriPoeni');
+        
+        var scoreLabel = game.add.text(game.world.centerX, game.world.centerY, text,
+                                       { font: '25px Arial', fill: '#ffffff', align: 'center' });
+        scoreLabel.anchor.setTo(0.5, 0.5);
     },
     start: function() {
         // Startuvaj ja igrata
         game.state.start('play');
-    },
+    }
 };
