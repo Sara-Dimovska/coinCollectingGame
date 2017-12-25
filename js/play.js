@@ -2,7 +2,7 @@
     Fixing list:
     - enemy time
     - enemy teleport
-    
+
 */
 var zivotPocetokX = 640;
 var zivotPocetokY = 10;
@@ -10,14 +10,17 @@ var zivotDolzina = 35;
 var prostor_PomegjuZivoti = 20;
 var brojZivoti;
 var zivoti = [];
+var laserVreme = 0;
+var laseri;
+var laseriTriger;
 
 var playState = {
     sozdadiSvet: function() {
-       
+
         this.zidovi = game.add.group();  // Kreiranje grupa 
         this.zidovi.enableBody = true; // dodadi Arcade physics svojstva za celata grupa
-        
-        
+
+
         // Kreiraj 10 zidovi
         game.add.sprite(0, 0, 'zidV', 0, this.zidovi); // Lev
         game.add.sprite(950, 0, 'zidV', 0, this.zidovi); // Desen
@@ -31,22 +34,24 @@ var playState = {
         var gorenSreden = game.add.sprite(230, 200, 'zidH', 0, this.zidovi);
         //  scale x = 120% y=100% (ako e 100% nema promena)
         gorenSreden.scale.setTo(1.2, 1);
-        
+
         var dolenSreden = game.add.sprite(230, 600, 'zidH', 0, this.zidovi);
         dolenSreden.scale.setTo(1.2, 1);
-        
+
         // Postavi gi site zidovi da bidat nepodvizni koga  kje bidat dopreni
         this.zidovi.setAll('body.immovable', true);
-        
+
         this.paricka = game.add.sprite(100,340,'paricka');       
         game.physics.arcade.enable(this.paricka);
-        
-    
+
+
         this.neprijateli = game.add.group();
         this.neprijateli.enableBody = true;
         // Kreiraj "n" neprijateli od istata slika
         // grupata e "dead" pod default, neaktivna
         this.neprijateli.createMultiple(2, 'neprijatel');
+        this.neprijateli.setAll('outOfBoundsKill', true);
+        this.neprijateli.setAll('checkWorldBounds',true);
         game.time.events.loop(4000, this.dodajNeprijatel, this); // na sekoi 4s dodadi neprijatel vo scenata
 
 
@@ -56,12 +61,19 @@ var playState = {
             zivoti.push(game.add.sprite(zivotPocetokX + i *(zivotDolzina + prostor_PomegjuZivoti),zivotPocetokY,'zivot'));
         }         
 
-       
+
     },
     create: function(){ // default Phaser funkcija
- 
+
         game.add.image(0,0,'pozadina2');
         this.cursor = game.input.keyboard.createCursorKeys(); // za strelki
+
+        this.wasd = {                                         // za wasd kopcinja
+            up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+            down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+            left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+            right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+        };
 
         this.sozdadiSvet();
 
@@ -73,66 +85,105 @@ var playState = {
 
         // Prikazi rezultat
         this.rezultatLabela = game.add.text(50, 10, 'парички: 0/50',{ font: '30px "Arial Black", Gadget, sans-serif', 
-                                                             fill: '#600000',
-                                                             fontWeight: 'bold'});
+                                                                     fill: '#600000',
+                                                                     fontWeight: 'bold'});
 
         game.global.rezultat = 0;
-        
+
         this.skokaZvuk = game.add.audio('skoka');
         this.skokaZvuk.volume = 0.3;
         this.zemaParickaZvuk = game.add.audio('zemaParicka');
         this.zemaParickaZvuk.volume = 0.4;
         this.mrtovZvuk = game.add.audio('mrtov');
         this.mrtovZvuk.volume = 0.35;
+        
+        // pukanje
+        laseri =game.add.group();
+        laseri.enableBody = true;
+        laseri.physicsBodyType = Phaser.Physics.ARCADE;
+        laseri.createMultiple(3000,'puka');
+        laseri.setAll('anchor.x',1);
+        laseri.setAll('anchor.x',0.5);
+        laseri.setAll('outOFBoundsKill',true);
+        laseri.setAll('checkWorldBounds',true);
+        
+        laseriTriger = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     },
-    
+
     update: function(){ // default Phaser funkcija
-        
+
         // kje ima kolizija pomegju igracot i zidovite
         game.physics.arcade.collide(this.igrac, this.zidovi);
-        
-        
+
+
         this.igracDvizenje();
 
         if (!this.igrac.inWorld) {
             this.igracUmira();
         }
-      
+
         // povikaj 'zemiParicka' koga igracot se preklopuva so parickata
         game.physics.arcade.overlap(this.igrac, this.paricka, this.zemiParicka, null, this);
-        
+
         // ovozmozi kolizija megju neprijatel i zid
-         game.physics.arcade.collide(this.neprijateli, this.zidovi);
+        game.physics.arcade.collide(this.neprijateli, this.zidovi);
         // povikaj funkcija odzemiZivot sekoj pat koga kje se sudrat igrac i neprijatel
         game.physics.arcade.overlap(this.igrac, this.neprijateli, this.odzemiZivot,null, this);
+        
+        game.physics.arcade.collide(laseri, this.zidovi,this.laserVoZid,null,this);
+        game.physics.arcade.overlap(this.neprijateli,laseri,this.ubijNeprijatel,null,this);
+        
     },
-  
+    ubijNeprijatel:function(neprijatel, laser){
+        neprijatel.kill();
+        this.mrtovZvuk.play();
+    },
+    laserVoZid:function(laser,zid){
+        laser.kill();
+    },
     igracDvizenje: function(){
-        if(this.cursor.left.isDown){ // pomestuvanje na igracot na levo ako e pritisnata  strelka na levo                   
+        if(this.cursor.left.isDown || this.wasd.left.isDown){ // pomestuvanje na igracot na levo ako e pritisnata  strelka na levo                   
             this.igrac.body.velocity.x = -300;
             this.igrac.frame = 0;
 
         }
-        else if(this.cursor.right.isDown){ // desno
+        else if(this.cursor.right.isDown || this.wasd.right.isDown){ // desno
             this.igrac.body.velocity.x = 300;
             this.igrac.frame = 1;
         }
 
-        else if(this.cursor.down.isDown){  // zabrzaj pagjanje za nadolu           
+        else if(this.cursor.down.isDown || this.wasd.down.isDown){  // zabrzaj pagjanje za nadolu           
             this.igrac.body.velocity.y = 300;
         }
         else{ // nema promeni
             this.igrac.body.velocity.x = 0;
         }
-        
+
         // ako e pritisnata gorna strelka i igracot e na zemja
-        if (this.cursor.up.isDown && this.igrac.body.touching.down) {
+        if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.igrac.body.touching.down) {
             // treba da skoka
             this.igrac.body.velocity.y = -520;  
             this.skokaZvuk.play();
         }
-
+        
+        if(laseriTriger.isDown){
+            this.pukajFunkcija();
+        }
+    },
+    pukajFunkcija: function(){
+        if(game.time.now > laserVreme){
+           var laser = laseri.getFirstExists(false);
+            
+            if(laser){
+                laser.reset(this.igrac.x + 5,this.igrac.y + 40);
+                if(this.igrac.frame == 0) // nasocen levo
+                    laser.body.velocity.x = - 400;
+                else if(this.igrac.frame == 1)
+                    laser.body.velocity.x = 400;
+                laserVreme = game.time.now + 200;
+            }
+        }
     },
     odzemiZivot:function(igrac,neprijatel){
         if(brojZivoti > 0){
@@ -157,19 +208,19 @@ var playState = {
     },
     zemiParicka: function(igrac, paricka) {
         this.zemaParickaZvuk.play();
-        
+
         // obnovi rezultat
         game.global.rezultat += 5;
         this.rezultatLabela.text = 'парички: ' + game.global.rezultat + '/50';
-        
+
         // napravi nevidliva paricka
         this.paricka.scale.setTo(0, 0);
-        
+
         // Skaliraj paricka za vremeod 300ms
         game.add.tween(this.paricka.scale).to({x: 1, y: 1}, 300).start();     
         // game.add.tween(this.player.scale).to({x: 1.3, y: 1.3}, 50).to({x: 1, y: 1}, 150).start();
-        
-        
+
+
         this.obnoviPozicijaParicka();
     },
     obnoviPozicijaParicka: function() {
@@ -200,23 +251,21 @@ var playState = {
     */
 
     dodajNeprijatel: function() {
-        
+
         var neprijatel = this.neprijateli.getFirstDead();
-        
+
         // ako ima max broj na neprijateli vo scenata
         if (!neprijatel) {
             return;
         }
-        
+
         // Init
+        var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
         neprijatel.anchor.setTo(0.5, 1);
         neprijatel.reset(game.world.centerX, 0);
-        neprijatel.body.gravity.y = 500; 
-        var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-        neprijatel.body.velocity.x = 100 *plusOrMinus; // 100 or -100
-        neprijatel.body.collideWorldBounds = true;
+        neprijatel.body.gravity.y = 100;        
+        neprijatel.body.velocity.x = 90 *plusOrMinus; // 100 or -100
         neprijatel.body.bounce.set(1);
-        neprijatel.checkWorldBounds = true;
-        neprijatel.outOfBoundsKill = true;     
+          
     }
 };

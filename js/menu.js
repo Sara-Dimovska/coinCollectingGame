@@ -16,7 +16,7 @@ var menuState = {
         
         // Objasnenie kako da se startuva igrata
         var startuvaj = game.add.text(game.world.centerX, game.world.centerY + 60,
-                                       'за Старт на играта, притиснете ја стрелката за надолу',
+                                       'Стартувајте со Enter или клик',
                                        { font: '25px Arial', fill: '#ffffff' });
         startuvaj.anchor.setTo(0.5, 0.5);
         /*
@@ -29,13 +29,16 @@ var menuState = {
 
         
         // promenliva za prifakjanje na user input (dolna strelka)    
-        var key = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+        var key = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+
         
         /*
             onDown.addOnce(contexFunction, context);
             Koga e pritistano soodvetnoto kopce, povikaj ja navedenata contexFunction
+            ili na click od mouse
         */
         key.onDown.addOnce(this.start, this);
+        game.input.onDown.add(this.start,this);
         
         // localStorage.setItem('name', value)
         if (!localStorage.getItem('najdobriPoeni')) {     
