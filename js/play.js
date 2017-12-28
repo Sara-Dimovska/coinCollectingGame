@@ -103,7 +103,7 @@ var playState = {
         laseri =game.add.group();
         laseri.enableBody = true;
         laseri.physicsBodyType = Phaser.Physics.ARCADE;
-        laseri.createMultiple(3000,'puka');
+        laseri.createMultiple(40,'puka');
         laseri.setAll('anchor.x',1);
         laseri.setAll('anchor.x',0.5);
         laseri.setAll('outOFBoundsKill',true);
@@ -158,7 +158,10 @@ var playState = {
             this.dodajNeprijatel();
             this.sledenNeprijatelVreme = game.time.now + docnenje;
         }
-
+        
+        if(game.global.rezultat == 100){
+            game.state.start('congrats');
+        }
 
     },
     ubijNeprijatel:function(neprijatel, laser){
@@ -203,9 +206,11 @@ var playState = {
 
             if(laser){
                 laser.reset(this.igrac.x + 5,this.igrac.y + 40);
-                if(this.igrac.frame == 0) // nasocen levo
+                
+                if(this.igrac.frame == 0) // igrac nasocen levo
                     laser.body.velocity.x = - 400;
-                else if(this.igrac.frame == 1)
+                
+                else if(this.igrac.frame == 1) // igrac nasocen desno
                     laser.body.velocity.x = 400;
                 laserVreme = game.time.now + 200;
             }
@@ -266,14 +271,7 @@ var playState = {
         var novaPozicija = pozicijaParicka[game.rnd.integerInRange(0, pozicijaParicka.length-1)];
         this.paricka.reset(novaPozicija.x, novaPozicija.y);
     },
-    /*
-    addEnemy() 
 
-    1. Get a dead sprite from the group
-    2. If there isn’t any dead sprite, do nothing
-    3. Initialise the sprite: position, physics values, autokill
-
-    */
 
     dodajNeprijatel: function() {
 

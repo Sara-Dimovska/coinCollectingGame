@@ -19,14 +19,12 @@ var loadState = {
         game.load.image('paricka', 'resursi/paricka.png');
         game.load.image('pozadina2','resursi/backgroundLvl1.png');
         game.load.image('zivot','resursi/zivot.png');
-        game.load.image('puka','resursi/shoot.png');
+        game.load.image('puka','resursi/laser.png');
+        game.load.image('cestitkiParicka','resursi/cestitki.png');
         game.load.audio('skoka', ['resursi/skoka.ogg', 'resursi/skoka.mp3']);
         game.load.audio('zemaParicka', ['resursi/zemaParicka.ogg', 'resursi/zemaParicka.mp3']);
         game.load.audio('mrtovNeprijatel', ['resursi/mrtovNeprijatel.ogg', 'resursi/mrtovNeprijatel.mp3']);
         game.load.audio('mrtovIgrac', ['resursi/mrtovIgrac.ogg', 'resursi/mrtovIgrac.mp3']);
-
-
-
         // resurs koj kje bide iskoristen za slednata sostojba
         game.load.image('pozadina1', 'resursi/pozadinskaSlika.jpg');
 

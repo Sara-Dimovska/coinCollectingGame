@@ -10,5 +10,6 @@ game.state.add('load', loadState);
 game.state.add('menu', menuState);
 game.state.add('play', playState);
 game.state.add('gameOver', gameOverState);
+game.state.add('congrats',congratsState);
 // Pocni od 'boot' sostojba
 game.state.start('boot');

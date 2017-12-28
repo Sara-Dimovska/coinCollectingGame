@@ -14,9 +14,9 @@ var menuState = {
 
               
         
-        // Objasnenie kako da se startuva igrata
+        // Objasnenie za igrata
         var startuvaj = game.add.text(game.world.centerX, game.world.centerY + 60,
-                                       'Стартувајте со Enter или клик',
+                                       'стартување: ENTER / клик \nдвижење на играч: стрелки / WASD \nпукање: SPACE',
                                        { font: '25px Arial', fill: '#ffffff' });
         startuvaj.anchor.setTo(0.5, 0.5);
         /*
