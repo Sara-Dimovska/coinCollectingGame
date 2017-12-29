@@ -1,7 +1,5 @@
 /*
     Fixing list:
-    - enemy time
-    - enemy teleport
 
 */
 var zivotPocetokX = 640;
@@ -17,6 +15,9 @@ var laseriTriger;
 var playState = {
     sozdadiSvet: function() {
 
+        /*
+        .............HARD CODED  Layer..........
+        
         this.zidovi = game.add.group();  // Kreiranje grupa 
         this.zidovi.enableBody = true; // dodadi Arcade physics svojstva za celata grupa
 
@@ -41,6 +42,15 @@ var playState = {
         // Postavi gi site zidovi da bidat nepodvizni koga  kje bidat dopreni
         this.zidovi.setAll('body.immovable', true);
 
+        */
+        
+        
+        this.map = game.add.tilemap('map1');
+        this.map.addTilesetImage('walls');
+        this.layer = this.map.createLayer('Tile Layer 1');
+        this.layer.resizeWorld();
+        this.map.setCollisionBetween(1, 999, true, 'Tile Layer 1');
+        
         this.paricka = game.add.sprite(100,340,'paricka');       
         game.physics.arcade.enable(this.paricka);
 
@@ -63,7 +73,7 @@ var playState = {
 
 
     },
-    create: function(){ // default Phaser funkcija
+    create: function(){ // rezervirana Phaser funkcija
 
         game.add.image(0,0,'pozadina2');
         this.cursor = game.input.keyboard.createCursorKeys(); // za strelki
@@ -103,7 +113,7 @@ var playState = {
         laseri =game.add.group();
         laseri.enableBody = true;
         laseri.physicsBodyType = Phaser.Physics.ARCADE;
-        laseri.createMultiple(40,'puka');
+        laseri.createMultiple(50,'puka');
         laseri.setAll('anchor.x',1);
         laseri.setAll('anchor.x',0.5);
         laseri.setAll('outOFBoundsKill',true);
@@ -114,10 +124,10 @@ var playState = {
         this.sledenNeprijatelVreme = 3200;
     },
 
-    update: function(){ // default Phaser funkcija
+    update: function(){ // rezervirana Phaser funkcija
 
         // kje ima kolizija pomegju igracot i zidovite
-        game.physics.arcade.collide(this.igrac, this.zidovi);
+        game.physics.arcade.collide(this.igrac, this.layer);
 
 
         this.igracDvizenje();
@@ -130,11 +140,11 @@ var playState = {
         game.physics.arcade.overlap(this.igrac, this.paricka, this.zemiParicka, null, this);
 
         // ovozmozi kolizija megju neprijatel i zid
-        game.physics.arcade.collide(this.neprijateli, this.zidovi);
+        game.physics.arcade.collide(this.neprijateli, this.layer);
         // povikaj funkcija odzemiZivot sekoj pat koga kje se sudrat igrac i neprijatel
         game.physics.arcade.overlap(this.igrac, this.neprijateli, this.odzemiZivot,null, this);
 
-        game.physics.arcade.collide(laseri, this.zidovi,this.laserVoZid,null,this);
+        game.physics.arcade.collide(laseri, this.layer,this.laserVoZid,null,this);
         game.physics.arcade.overlap(this.neprijateli,laseri,this.ubijNeprijatel,null,this);
 
 
@@ -190,7 +200,7 @@ var playState = {
         }
 
         // ako e pritisnata gorna strelka i igracot e na zemja
-        if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.igrac.body.touching.down) {
+        if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.igrac.body.onFloor()) {
             // treba da skoka
             this.igrac.body.velocity.y = -520;  
             this.skokaZvuk.play();
@@ -212,6 +222,7 @@ var playState = {
                 
                 else if(this.igrac.frame == 1) // igrac nasocen desno
                     laser.body.velocity.x = 400;
+                
                 laserVreme = game.time.now + 200;
             }
         }

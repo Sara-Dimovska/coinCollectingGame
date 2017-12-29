@@ -12,9 +12,13 @@ var loadState = {
         game.load.setPreloadSprite(progress);
 
         // izvleci gi site potrebni resursi za igrata
+        game.load.tilemap('map1','resursi/tilemap.json',null,Phaser.Tilemap.TILED_JSON);
+        game.load.image('walls','resursi/walls.png');
+        
+        
         game.load.spritesheet('igrac', 'resursi/igrac.png',85,100);       
-        game.load.image('zidV', 'resursi/V.png');
-        game.load.image('zidH', 'resursi/H.png');
+        //game.load.image('zidV', 'resursi/V.png');
+        //game.load.image('zidH', 'resursi/H.png');
         game.load.image('neprijatel', 'resursi/myEnemy.png');
         game.load.image('paricka', 'resursi/paricka.png');
         game.load.image('pozadina2','resursi/backgroundLvl1.png');
