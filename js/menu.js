@@ -59,6 +59,6 @@ var menuState = {
     },
     start: function() {
         // Startuvaj ja igrata
-        game.state.start('level1');
+        game.state.start('level2');
     }
 };

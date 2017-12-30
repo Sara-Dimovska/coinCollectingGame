@@ -74,7 +74,7 @@ var playStateLvl3 = {
 
         laseriTriger = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        this.sledenNeprijatelVreme = 3200;
+        this.sledenNeprijatelVreme = 4200;
     },
 
     update: function(){ // rezervirana Phaser funkcija
