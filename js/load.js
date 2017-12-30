@@ -16,9 +16,9 @@ var loadState = {
         game.load.tilemap('map2','resursi/tilemap2.json',null,Phaser.Tilemap.TILED_JSON);
         game.load.tilemap('map3','resursi/tilemap3.json',null,Phaser.Tilemap.TILED_JSON);
         game.load.image('walls','resursi/walls.png'); 
-        
-        
-        
+
+
+
         game.load.spritesheet('igrac', 'resursi/igrac.png',85,100);       
         game.load.image('neprijatel', 'resursi/neprijatel.png');
         game.load.image('paricka', 'resursi/paricka.png');
@@ -34,7 +34,7 @@ var loadState = {
         game.load.audio('zemaParicka', ['resursi/zemaParicka.ogg', 'resursi/zemaParicka.mp3']);
         game.load.audio('mrtovNeprijatel', ['resursi/mrtovNeprijatel.ogg', 'resursi/mrtovNeprijatel.mp3']);
         game.load.audio('mrtovIgrac', ['resursi/mrtovIgrac.ogg', 'resursi/mrtovIgrac.mp3']);
-        
+
         // resurs koj kje bide iskoristen za slednata sostojba
         game.load.image('pozadina1', 'resursi/pozadinskaSlika.jpg');
 
