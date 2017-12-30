@@ -1,22 +1,22 @@
-/*
-    Fixing list:
 
-*/
 var zivotPocetokX = 640;
 var zivotPocetokY = 10;
 var zivotDolzina = 35;
 var prostor_PomegjuZivoti = 20;
-var brojZivoti;
+
+
 var zivoti = [];
+
+
 var laserVreme = 0;
 var laseri;
 var laseriTriger;
 
-var playState = {
+var playStateLvl1 = {
     sozdadiSvet: function() {
 
         /*
-        .............HARD CODED  Layer..........
+        .............  HARD CODED  Tilemap ..........
         
         this.zidovi = game.add.group();  // Kreiranje grupa 
         this.zidovi.enableBody = true; // dodadi Arcade physics svojstva za celata grupa
@@ -59,15 +59,14 @@ var playState = {
         this.neprijateli.enableBody = true;
         // Kreiraj "n" neprijateli od istata slika
         // grupata e "dead" pod default, neaktivna
-        this.neprijateli.createMultiple(10, 'neprijatel');
+        this.neprijateli.createMultiple(5, 'neprijatel');
         this.neprijateli.setAll('outOfBoundsKill', true);
         this.neprijateli.setAll('checkWorldBounds',true);
+        
         //game.time.events.loop(4000, this.dodajNeprijatel, this); // na sekoi 4s dodadi neprijatel vo scenata
 
 
-        brojZivoti = 5; 
-
-        for(var i=0;i<5;i++){
+        for(var i=0;i<game.global.brojZivoti;i++){
             zivoti.push(game.add.sprite(zivotPocetokX + i *(zivotDolzina + prostor_PomegjuZivoti),zivotPocetokY,'zivot'));
         }         
 
@@ -121,7 +120,7 @@ var playState = {
 
         laseriTriger = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        this.sledenNeprijatelVreme = 3200;
+        this.sledenNeprijatelVreme = 4200;
     },
 
     update: function(){ // rezervirana Phaser funkcija
@@ -149,7 +148,7 @@ var playState = {
 
 
         if (this.sledenNeprijatelVreme < game.time.now) {
-            // pomoshni
+            
             var pocetok = 4000, kraj = 1000, poeni = 50;
            
             /*
@@ -169,8 +168,9 @@ var playState = {
             this.sledenNeprijatelVreme = game.time.now + docnenje;
         }
         
-        if(game.global.rezultat == 100){
-            game.state.start('congrats');
+        if(game.global.rezultat == 100){         
+            zivoti.length = 0;
+            game.state.start('level2');
         }
 
     },
@@ -215,25 +215,29 @@ var playState = {
             var laser = laseri.getFirstExists(false);
 
             if(laser){
-                laser.reset(this.igrac.x + 5,this.igrac.y + 40);
                 
-                if(this.igrac.frame == 0) // igrac nasocen levo
+                
+                if(this.igrac.frame == 0){ // igrac nasocen levo
+                    laser.reset(this.igrac.x + 5,this.igrac.y + 40);
                     laser.body.velocity.x = - 400;
-                
-                else if(this.igrac.frame == 1) // igrac nasocen desno
+                }               
+                else if(this.igrac.frame == 1){// igrac nasocen desno
+                    laser.reset(this.igrac.x + 70,this.igrac.y + 40);
                     laser.body.velocity.x = 400;
+                } 
+                    
                 
                 laserVreme = game.time.now + 200;
             }
         }
     },
     odzemiZivot:function(igrac,neprijatel){
-        if(brojZivoti > 0){
+        if(game.global.brojZivoti > 0){
             this.mrtovIgrac.play();
             neprijatel.kill();
-            zivoti[brojZivoti-1].kill();
+            zivoti[game.global.brojZivoti-1].kill();
             zivoti.pop(); 
-            brojZivoti--;
+            game.global.brojZivoti--;
         }
 
         else {
@@ -298,7 +302,7 @@ var playState = {
         neprijatel.anchor.setTo(0.5, 1);
         neprijatel.reset(game.world.centerX, 0);
         neprijatel.body.gravity.y = 100;        
-        neprijatel.body.velocity.x = 90 *plusOrMinus; // 100 or -100
+        neprijatel.body.velocity.x = 90 *plusOrMinus; 
         neprijatel.body.bounce.set(1);
 
     }

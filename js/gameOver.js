@@ -43,7 +43,9 @@ var gameOverState = {
         
     },
     start: function() {
+        game.global.brojZivoti = 5;
+        zivoti.length = 0;
         // Startuvaj ja igrata
-        game.state.start('play');
+        game.state.start('level1');
     }
 };
