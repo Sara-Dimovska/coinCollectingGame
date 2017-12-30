@@ -38,6 +38,6 @@ var congratsState = {
     },
     start: function() {
         // Startuvaj ja igrata
-        game.state.start('play');
+        game.state.start('level1');
     }
 };

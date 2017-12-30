@@ -8,7 +8,7 @@ var bootState = {
         
         // vo ovaa sostojba se pisuvaat opstite podesuvanja za igrata
         game.stage.backgroundColor = '#3498db';
-        //dostapni 3 izvodi: P2(za kompleksni resenija kako Angry Birds), Ninja(pomokjen od P2) and Arcade(ednostaven za pravoagolni kolizii)
+        //dostapni 3 izvori: P2(za kompleksni resenija kako Angry Birds), Ninja(pomokjen od P2) i Arcade(ednostaven za pravoagolni kolizii)
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Startuvaj jaslednata sostojba
